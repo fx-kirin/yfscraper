@@ -41,8 +41,8 @@ def _parse_stock_division(data: List[str]) -> Dict:
     matched = re.search(u'分割: (.+)株 -> (.+)株', data[1])
     return {
         "date": datetime.datetime.strptime(data[0], fmt).date(),
-        "division_from": float(matched.group(1),)
-        "division_to": float(matched.group(2),)
+        "division_from": float(matched.group(1))
+        "division_to": float(matched.group(2))
     }
 
 
