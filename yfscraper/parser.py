@@ -1,6 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import datetime
 from typing import List, Dict
 import bs4
+import re
 
 fmt = "%Y年%m月%d日"
 
@@ -33,6 +36,14 @@ def _parse_stock(data: List[str]) -> Dict:
         "volume": float(data[5]),
         "final_v": float(data[6])
     }
+    
+def _parse_stock_division(data: List[str]) -> Dict:
+    matched = re.search(u'分割: (.+)株 -> (.+)株', data[1])
+    return {
+        "date": datetime.datetime.strptime(data[0], fmt).date(),
+        "division_from": float(matched.group(1),)
+        "division_to": float(matched.group(2),)
+    }
 
 
 def parse_html(html_soup: bs4.BeautifulSoup) -> bool:
@@ -54,5 +65,8 @@ def parse_html(html_soup: bs4.BeautifulSoup) -> bool:
 
     for row in data_rows:
         data = [t.text.replace(",", "") for t in row.find_all("td")]
-        yield _parse_f(data)
+        if len(data) == 2:
+            yield _parse_stock_division(data)
+        else:
+            yield _parse_f(data)
     return False
