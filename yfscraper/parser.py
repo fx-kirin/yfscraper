@@ -69,5 +69,9 @@ def parse_html(html_soup: bs4.BeautifulSoup) -> bool:
         if len(data) == 2:
             yield _parse_stock_division(data)
         else:
-            yield _parse_f(data)
+            try:
+                yield _parse_f(data)
+            except Exception as e:
+                print('Error occured', e)
+                pass
     return False
